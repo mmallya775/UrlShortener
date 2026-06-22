@@ -16,6 +16,6 @@ public class UrlEntity {
     @Column
     private String mainUrl;
 
-    @Column
+    @Column(unique = true)
     private String shortCode;
 }

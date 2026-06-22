@@ -1,6 +1,7 @@
 package cloud.mallya.urlshortener.controller;
 
 import cloud.mallya.urlshortener.dto.ShortenUrlRequestDTO;
+import cloud.mallya.urlshortener.dto.ShortenUrlResponseDTO;
 import cloud.mallya.urlshortener.service.UrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +16,13 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping("/shorten")
-    public String shortenUrl(@RequestBody ShortenUrlRequestDTO requestDTO) {
-
+    public ShortenUrlResponseDTO shortenUrl(@RequestBody ShortenUrlRequestDTO requestDTO) {
         return urlService.shortenUrl(requestDTO);
     }
 
-    @GetMapping("/hello")
+    @GetMapping("/health")
     public String hello() {
-        return "Well hello!";
+        return "ok";
     }
 }
 
