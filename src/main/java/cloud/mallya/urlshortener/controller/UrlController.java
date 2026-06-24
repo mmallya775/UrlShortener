@@ -4,10 +4,9 @@ import cloud.mallya.urlshortener.dto.ShortenUrlRequestDTO;
 import cloud.mallya.urlshortener.dto.ShortenUrlResponseDTO;
 import cloud.mallya.urlshortener.service.UrlService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +19,12 @@ public class UrlController {
         return urlService.shortenUrl(requestDTO);
     }
 
-    @GetMapping("/health")
-    public String hello() {
-        return "ok";
+    @GetMapping("/{shortCode}")
+    public ResponseEntity<Void> getRedirectionUrl(@PathVariable String shortCode) {
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY.value())
+                .location(urlService.getRedirectionURI(shortCode))
+                .build();
     }
+
 }
 

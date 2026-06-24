@@ -10,6 +10,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+
 @Service
 @RequiredArgsConstructor
 public class UrlService {
@@ -50,5 +52,14 @@ public class UrlService {
                     .shortCode(shortCode)
                     .build();
         }
+    }
+
+    public URI getRedirectionURI(String shortCode) {
+
+        String urlToBeParsed = urlRepository.findByShortCode(shortCode)
+                .map(UrlEntity::getMainUrl)
+                .orElse("/");
+        return URI.create(urlToBeParsed);
+
     }
 }

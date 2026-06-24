@@ -3,8 +3,10 @@ package cloud.mallya.urlshortener.repository;
 import cloud.mallya.urlshortener.entity.UrlEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface UrlRepository extends JpaRepository<UrlEntity, Long> {
 
-    boolean existsByShortCode(String shortCode);
+    Optional<UrlEntity> findByShortCode(String shortCode);
 
 }
