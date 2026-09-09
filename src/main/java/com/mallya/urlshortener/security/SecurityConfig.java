@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/csrf")
                         .permitAll()
+                        .requestMatchers("/api/createUser").permitAll()
                         //                .requestMatchers("/api/admin/**")
                         //                .hasRole("ADMIN")
                         .anyRequest()
