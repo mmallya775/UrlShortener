@@ -1,6 +1,7 @@
 package com.mallya.urlshortener.security;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -31,6 +35,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
         httpSecurity
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/csrf")
                         .permitAll()
                         //                .requestMatchers("/api/admin/**")
@@ -50,7 +55,23 @@ public class SecurityConfig {
     }
 
     @Bean
-    CommandLineRunner createInitialUser(UserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
+    UrlBasedCorsConfigurationSource corsConfigurationSource(@Value("${app.frontend-url}") String frontendUrl) {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of(frontendUrl));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    CommandLineRunner createInitialUser(
+            UserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
         return _ -> {
             if (!userDetailsManager.userExists("user")) {
                 userDetailsManager.createUser(User.builder()
@@ -58,13 +79,8 @@ public class SecurityConfig {
                         .password(passwordEncoder.encode("password"))
                         .roles("USER")
                         .build());
-                jdbcTemplate.update(
-                        "UPDATE users SET name = ? WHERE username = ?",
-                        "Mock User",
-                        "user"
-                );
+                jdbcTemplate.update("UPDATE users SET name = ? WHERE username = ?", "Mock User", "user");
             }
-
 
             if (!userDetailsManager.userExists("admin")) {
                 userDetailsManager.createUser(User.builder()
@@ -72,14 +88,8 @@ public class SecurityConfig {
                         .password(passwordEncoder.encode("password"))
                         .roles("USER", "ADMIN")
                         .build());
-                jdbcTemplate.update(
-                        "UPDATE users SET name = ? WHERE username = ?",
-                        "Administrator",
-                        "admin"
-                );
+                jdbcTemplate.update("UPDATE users SET name = ? WHERE username = ?", "Administrator", "admin");
             }
-
-
         };
     }
 }
