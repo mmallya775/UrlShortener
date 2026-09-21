@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UrlShortenService {
@@ -20,14 +22,14 @@ public class UrlShortenService {
      * @param requestDTO DTO containing the URL to be shortened
      * @return DTO containing the shortened URL
      */
-    public ShortenUrlResponseDTO shortenUrl(ShortenUrlRequestDTO requestDTO) {
+    public ShortenUrlResponseDTO shortenUrl(ShortenUrlRequestDTO requestDTO, String username) {
         ShortenUrlResponseDTO responseDTO = new ShortenUrlResponseDTO();
 
         String shortCode = RandomStringUtils.secure().nextAlphanumeric(8);
         //        String shortCode = "TODO";
         ShortLinks shortLinks = new ShortLinks();
 
-        shortLinks.setUserId(1L);
+        shortLinks.setUsername(username);
         shortLinks.setMainUrl(requestDTO.getUrl());
         shortLinks.setShortCode(shortCode);
 
@@ -36,5 +38,9 @@ public class UrlShortenService {
         responseDTO.setShortUrl(shortCode);
 
         return responseDTO;
+    }
+
+    public List<ShortLinks> getAllUrls(String username) {
+        return shortLinksRepository.findByUsername(username);
     }
 }

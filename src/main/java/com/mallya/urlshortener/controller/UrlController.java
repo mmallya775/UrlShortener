@@ -2,12 +2,13 @@ package com.mallya.urlshortener.controller;
 
 import com.mallya.urlshortener.dto.ShortenUrlRequestDTO;
 import com.mallya.urlshortener.dto.ShortenUrlResponseDTO;
+import com.mallya.urlshortener.entity.ShortLinks;
 import com.mallya.urlshortener.service.UrlShortenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -24,7 +25,13 @@ public class UrlController {
      * @return DTO representing the shortened URL
      */
     @PostMapping("/shorten")
-    public ShortenUrlResponseDTO shortenUrl(@RequestBody ShortenUrlRequestDTO request) {
-        return urlShortenService.shortenUrl(request);
+    public ShortenUrlResponseDTO shortenUrl(@RequestBody ShortenUrlRequestDTO request, Authentication authentication) {
+        return urlShortenService.shortenUrl(request, authentication.getName());
+    }
+
+    @GetMapping("/urls")
+    public List<ShortLinks> getAllUrls(Authentication authentication) {
+        //        System.out.println(authentication.getName());
+        return urlShortenService.getAllUrls(authentication.getName());
     }
 }

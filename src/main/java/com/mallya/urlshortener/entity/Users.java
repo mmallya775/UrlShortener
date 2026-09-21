@@ -1,11 +1,12 @@
 package com.mallya.urlshortener.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +25,12 @@ public class Users {
 
     @Column(name = "enabled")
     private boolean enabled;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "authorities",
+            joinColumns = @JoinColumn(name = "username")
+    )
+    @Column(name = "authority")
+    private Set<String> authorities = new HashSet<>();
 }

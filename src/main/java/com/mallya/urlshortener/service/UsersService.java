@@ -4,9 +4,7 @@ import com.mallya.urlshortener.dto.NewUserRequestDTO;
 import com.mallya.urlshortener.entity.Users;
 import com.mallya.urlshortener.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
     public String getNameByUsername(String username) {
@@ -26,14 +23,14 @@ public class UsersService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        userDetailsManager.createUser(User.builder()
-                .username(newUserRequestDTO.getUsername())
-                .password(passwordEncoder.encode(newUserRequestDTO.getPassword()))
-                .roles("USER")
-                .build());
-        Users user = usersRepository.findById(newUserRequestDTO.getUsername()).orElseThrow();
+        Users user = new Users();
 
+        user.setUsername(newUserRequestDTO.getUsername());
         user.setName(newUserRequestDTO.getName());
+        user.setPassword(passwordEncoder.encode(newUserRequestDTO.getPassword()));
+        user.setEnabled(true);
+
+        user.getAuthorities().add("ROLE_USER");
 
         usersRepository.save(user);
     }

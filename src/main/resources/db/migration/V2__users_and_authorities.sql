@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS authorities
 (
-    username  VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL,
     authority VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_authorities_users

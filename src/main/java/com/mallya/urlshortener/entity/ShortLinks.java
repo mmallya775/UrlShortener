@@ -18,8 +18,8 @@ public class ShortLinks {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "main_url", nullable = false, length = Integer.MAX_VALUE)
     private String mainUrl;
