@@ -34,4 +34,9 @@ public class UrlController {
         //        System.out.println(authentication.getName());
         return urlShortenService.getAllUrls(authentication.getName());
     }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteUrl(@PathVariable Long id, Authentication authentication) {
+        urlShortenService.delete(id, authentication.getName());
+    }
 }

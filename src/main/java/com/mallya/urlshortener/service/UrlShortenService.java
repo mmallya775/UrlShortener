@@ -6,7 +6,10 @@ import com.mallya.urlshortener.entity.ShortLinks;
 import com.mallya.urlshortener.repository.ShortLinksRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -42,5 +45,14 @@ public class UrlShortenService {
 
     public List<ShortLinks> getAllUrls(String username) {
         return shortLinksRepository.findByUsername(username);
+    }
+
+    @Transactional
+    public void delete(Long id, String username) {
+        ShortLinks link = shortLinksRepository
+                .findByIdAndUsername(id, username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "URL not found"));
+
+        shortLinksRepository.delete(link);
     }
 }
