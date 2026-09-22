@@ -10,4 +10,6 @@ public interface ShortLinksRepository extends JpaRepository<ShortLinks, Long> {
     List<ShortLinks> findByUsername(String username);
 
     Optional<ShortLinks> findByIdAndUsername(Long id, String username);
+
+    Optional<ShortLinks> findByShortCode(String shortCode);
 }

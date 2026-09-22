@@ -6,6 +6,8 @@ import com.mallya.urlshortener.entity.ShortLinks;
 import com.mallya.urlshortener.repository.ShortLinksRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.List;
 public class UrlShortenService {
 
     private final ShortLinksRepository shortLinksRepository;
+    private final CacheManager cacheManager;
 
     /**
      * Creates a shortened URL from the URL contained in the request.
@@ -54,5 +57,12 @@ public class UrlShortenService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "URL not found"));
 
         shortLinksRepository.delete(link);
+
+        Cache cache = cacheManager.getCache("redirection");
+
+
+        if (cache != null) {
+            cache.evictIfPresent(link.getShortCode());
+        }
     }
 }

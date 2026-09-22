@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -59,6 +60,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/csrf")
                         .permitAll()
                         .requestMatchers("/api/createUser")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/{shortCode}")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
